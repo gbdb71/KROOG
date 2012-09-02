@@ -245,7 +245,6 @@ document.body.onkeypress = function(e) {
 	
 }
 
-
 /******* GAME RESET *******/
 function reset() {	
 	difficulty = 1;
@@ -292,6 +291,7 @@ function resetVariables() {
 
 
 /******* UPDATE *******/
+
 function update(modifier) {
 	// Trigger fade-in if alpha is set to 0
 	if (alpha <= 1) {
@@ -360,7 +360,6 @@ function playerMovement(modifier) {
 		}
 	}
 };
-
 
 // Movement of red and blue bubbles
 function otherMovement(other,modifier) {
