@@ -1077,7 +1077,7 @@ function menuBlue() {
 	
 	ctx.font = '13px Helvetica';
 	ctx.textAlign = 'left';
-	ctx.fillText('Bonus points for this bubble!', ctx.canvas.width / 1.95 + 33,headingHeight + 150);
+	ctx.fillText('Points for this bubble!', ctx.canvas.width / 1.95 + 33,headingHeight + 150);
 	ctx.textAlign = 'right';
 	ctx.fillText('EXPAND TO EAT ME!', ctx.canvas.width / 2.1 - 52,headingHeight + 150);
 	
@@ -1145,12 +1145,12 @@ function menuGold() {
 	ctx.strokeStyle = 'rgba(255,255,255,0.6)';
 
 	// TEXT
-	ctx.moveTo(ctx.canvas.width / 1.96,headingHeight + 290);
-	ctx.lineTo(ctx.canvas.width / 1.96 + 35,headingHeight + 270);
+	ctx.moveTo(ctx.canvas.width / 1.935, headingHeight + 290);
+	ctx.lineTo(ctx.canvas.width / 1.935 + 30, headingHeight + 290);
 
 	ctx.moveTo(ctx.canvas.width / 2.1, headingHeight + 270);
-	ctx.lineTo(ctx.canvas.width / 2.1 - 20,headingHeight + 270);
-	ctx.lineTo(ctx.canvas.width / 2.1 - 20,headingHeight + 310);
+	ctx.lineTo(ctx.canvas.width / 2.1 - 20, headingHeight + 270);
+	ctx.lineTo(ctx.canvas.width / 2.1 - 20, headingHeight + 310);
 	ctx.lineTo(ctx.canvas.width / 2.1, headingHeight + 310);
 	
 	ctx.moveTo(ctx.canvas.width / 2.1 - 20, headingHeight + 290);
@@ -1161,9 +1161,7 @@ function menuGold() {
 	
 	ctx.font = '13px Helvetica';
 	ctx.textAlign = 'left';
-	ctx.fillText('Special bonus modifier', ctx.canvas.width / 1.95 + 33,headingHeight + 270);
-	ctx.fillText('(*x) - worth current quantity & points collected * x', ctx.canvas.width / 1.95 + 33,headingHeight + 285);
-	ctx.fillText('(-x req) - minus x bubbles required', ctx.canvas.width / 1.95 + 33,headingHeight + 300);
+	ctx.fillText('Special bonus. Always good!', ctx.canvas.width / 1.95 + 33,headingHeight + 290);
 	ctx.textAlign = 'right';
 	ctx.fillText('RARE GOLDEN BUBBLE!', ctx.canvas.width / 2.1 - 52,headingHeight + 290);
 	
