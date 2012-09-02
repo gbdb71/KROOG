@@ -1131,7 +1131,7 @@ function menuGold() {
 	ctx.save();
 	ctx.beginPath();
 	
-	// BLUE 
+	// GOLD 
 	ctx.fillStyle = 'rgba(255, 162, 0, 1)';
 	ctx.arc(ctx.canvas.width/2, headingHeight + 290, 20, 0 , 2 * Math.PI, true);
 	ctx.fill();
