@@ -611,8 +611,8 @@ function updatePlayerColorstops() {
 
 // Rest player colors
 function resetPlayerColorstops() {
-	player.colorstop1 = '#ababab';
-	player.colorstop2 = '#949494';
+	player.colorstop1 = 'transparent';
+	player.colorstop2 = '#ffffff';
 };
 
 // Set background gradient
@@ -865,16 +865,18 @@ function drawLevelText() {
 }
 
 function drawPlayer() {
+	ctx.save();
+	ctx.shadowBlur=15;
+	ctx.shadowColor="white";
 	var playergrad = ctx.createRadialGradient(player.x, player.y, 0, player.x, player.y, player.radius);
 	playergrad.addColorStop(0.25, player.colorstop1);
 	playergrad.addColorStop(0.9, player.colorstop2);
-	
 	ctx.fillStyle = playergrad;
 	ctx.beginPath();
 	ctx.arc(player.x, player.y, player.radius, 0 , 2 * Math.PI, true);
 	ctx.closePath();
 	ctx.fill();
-	
+	ctx.restore();
 	ctx.strokeStyle = '#ffffff';
 	ctx.stroke();
 	
