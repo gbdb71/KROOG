@@ -8,10 +8,35 @@ var ctxBg = document.getElementById('canvasBg').getContext('2d');
 ctxBg.canvas.width = document.body.offsetWidth;
 ctxBg.canvas.height = document.body.offsetHeight; 
 
+(function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+                                   || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+ 
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function(callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+ 
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+}());
+
 /******* DEFINE MAIN VARIABLES *******/
 
 // Sounds
-if (navigator.appName != 'Microsoft Internet Explorer') {
+if (navigator.appName != 'Microsoft Internet Explorer' && ! navigator.userAgent.match(/AppleWebKit/) && !window.opera || navigator.userAgent.match(/Chrome/) ) {
 	var synth = new SfxrSynth();
 	
 	// State change sound
@@ -37,11 +62,12 @@ if (navigator.appName != 'Microsoft Internet Explorer') {
 	// All collected sound
 	var specialCollectedSound = new Audio();
 	specialCollectedSound.src = synth.getWave('2,0.06,0.17,0.3329,0.46,0.55,,,,,,0.5606,0.5871,,,,,0.6799,0.77,,,,,0.7');
+	
 }
  
 // Entity Attributes
 var player = {
-	speed: 180,
+	speed: 200,
 	x: 1,
 	y: 1,
 	expanding: false
@@ -166,18 +192,18 @@ document.body.onclick = function() {
 
 // SPACE functionality
 document.body.onkeypress = function(e) {
-	var key = (e.keyCode) ? e.keyCode : (e.which) ? e.which : (e.charCode) ? e.charCode : -1;
-	
+	var key = (typeof e.which == "number") ? e.which : e.keyCode;	
 	if (key === 13 && currentMode !== 'menu') {
-		console.log('paused? ' + paused);
 		paused = !paused;
 	}
 
 	// If player is in a menu, SPACE changes game state
-	if (key === 32 && ctx.globalAlpha >= 1 && currentMode !== 'game') {
+	if (key === 32 && ctx.globalAlpha >= 0.9 && currentMode !== 'game') {
 		switch(currentMode) {
 		case 'menu':
-			stateChangeSound.play();
+			if (synth) {
+				stateChangeSound.play();
+			}
 			player.expanding = false;
 			resetBgColorstops();
 			currentMode = 'game';
@@ -185,7 +211,9 @@ document.body.onkeypress = function(e) {
 			break;
 		
 		case 'finished':
-			stateChangeSound.play();
+			if (synth) {
+				stateChangeSound.play();
+			}
 			resetBgColorstops();
 			// food.minQuant = food.allPieces.length + levelCollected * 2;
 			// enemy.minQuant = Math.round(food.minQuant / 1.3);
@@ -194,7 +222,9 @@ document.body.onkeypress = function(e) {
 			break;
 		
 		case 'gameover':
-			stateChangeSound.play();
+			if (synth) {
+				stateChangeSound.play();
+			}
 			reset();
 			break;
 		}
@@ -202,7 +232,9 @@ document.body.onkeypress = function(e) {
 	
 	// If in game mode, SPACE is used to start/stop expanding
 	else if (key === 32 && currentMode === 'game' && !player.expanding) {
-		expandingSound.play();
+		if (synth) {
+			expandingSound.play();
+		}
 		player.expanding = true;
 		if (instruction === 3) {
 			instruction = 4;
@@ -226,12 +258,16 @@ document.body.onkeypress = function(e) {
 			food.minQuant = (food.allPieces.length + levelCollected);
 			enemy.minQuant = Math.floor(food.minQuant / 1.5);
 			currentMode = 'finished';
-			finishedSound.play();
+			if (synth) {
+				finishedSound.play();
+			}
 			alpha = 0;	
 		}
 		
 		else {
- 			gameOverSound.play();
+			if (synth) {
+ 				gameOverSound.play();
+ 			}
 			resetVariables();
 			if (instructionsOn) {
 				instructionsOn = false;
@@ -239,8 +275,10 @@ document.body.onkeypress = function(e) {
 		}
 		
 		// Stop Expansion sound
-		expandingSound.currentTime = 0;
-		expandingSound.pause();
+		if (synth) {
+			expandingSound.currentTime = 0;
+			expandingSound.pause();
+		}
 	}
 	
 }
@@ -347,10 +385,14 @@ function playerMovement(modifier) {
 		
 		// Is enemy or wall touching? Only check this if expanding
 		if (enemyCollision() || wallCollision()) {
-			expandingSound.currentTime = 0;
-			expandingSound.pause();
+			if (synth) {
+				expandingSound.currentTime = 0;
+				expandingSound.pause();
+			}
 			alpha = 0;
- 			gameOverSound.play();
+			if (synth) {
+ 				gameOverSound.play();
+ 			}
 			currentMode = 'gameover';	
 			finalScore = finalScore + score;		
 			resetBgColorstops();
@@ -444,27 +486,35 @@ function foodCollision() {
 			} 
 			else {
 				if (food.allPieces.length === 1 && piece.type === 'normal') {
-					specialCollectedSound.play();
+					if (synth) {
+						specialCollectedSound.play();
+					}
 					piece.worth = piece.worth * 2;					
 				}
 				
 				else {
 					if (piece.type === 'bonusspecial') {
-						specialCollectedSound.currentTime = 0;			
-						specialCollectedSound.play();
+						if (synth) {
+							specialCollectedSound.currentTime = 0;			
+							specialCollectedSound.play();
+						}
 						piece.worth = score * piece.special;
 						piece.quantityWorth = levelCollected * piece.special;
 					}
 					else if (piece.type === 'minusMinReq') {
-						specialCollectedSound.currentTime = 0;			
-						specialCollectedSound.play();
+						if (synth) {
+							specialCollectedSound.currentTime = 0;			
+							specialCollectedSound.play();
+						}
 						piece.worth = 0;
 						piece.quantityWorth = 0;
 						minRequired -= piece.special;
 					}					
 					else {
-						collectedSound.currentTime = 0;			
-						collectedSound.play();
+						if (synth) {
+							collectedSound.currentTime = 0;			
+							collectedSound.play();
+						}
 					}
 				}
 				score += piece.worth;	
@@ -1234,10 +1284,10 @@ function menuKeys(y,alpha){
 function main() {
 	var now = Date.now();
 	var delta = now - then;
-	update(delta / 1000);
-	render();
-	then = now;
-	
+    requestAnimationFrame(main);
+    update(delta / 1000);
+    render();
+    then = now;
 };
 
 // Play
@@ -1246,4 +1296,4 @@ reset();
 var then = Date.now();
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas, false);
-setInterval(main, 1); // Execute as fast as possible
+requestAnimationFrame(main);
